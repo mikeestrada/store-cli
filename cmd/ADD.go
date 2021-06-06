@@ -44,13 +44,14 @@ var ADDCmd = &cobra.Command{
 	Short: "Add a key and value",
 	Long:  `Add a key and value`,
 	Run: func(cmd *cobra.Command, args []string) {
+		// TODO check if exists, if so append
 		conn, err := redis.Dial("tcp", ":6379")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer conn.Close()
 
-		n, err := conn.Do("SET", args[0], args[1])
+		n, err := conn.Do("APPEND", args[0], args[1])
 		if err != nil {
 			fmt.Printf("error: %s", err)
 		}
