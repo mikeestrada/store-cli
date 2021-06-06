@@ -23,51 +23,37 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Adder struct {
-	conn redis.Conn
-	do   func()
-}
-
-func NewAdder(cn redis.Conn) *Adder {
-	return &Adder{
-		conn: cn,
-	}
-}
-
-func (a *Adder) Add(args []string) {
-
-}
-
-// ADDCmd represents the ADD command
-var ADDCmd = &cobra.Command{
-	Use:   "ADD",
-	Short: "Add a key and value",
-	Long:  `Add a key and value`,
+// MEMBEREXISTSCmd represents the MEMBEREXISTS command
+var MEMBERSCmd = &cobra.Command{
+	Use:   "MEMBERS",
+	Short: "Get values for key",
+	Long:  `Get values for key`,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("MEMBERS called")
 		conn, err := redis.Dial("tcp", ":6379")
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer conn.Close()
 
-		n, err := conn.Do("SET", args[0], args[1])
+		n, err := conn.Do("GET", args[0])
 		if err != nil {
 			fmt.Printf("error: %s", err)
 		}
-		fmt.Println(n)
+		fmt.Println(string(n.([]byte)))
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(ADDCmd)
+	rootCmd.AddCommand(MEMBERSCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// ADDCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// MEMBEREXISTSCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// ADDCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// MEMBEREXISTSCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
