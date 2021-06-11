@@ -25,7 +25,6 @@ import (
 // GetMembers returns the collection of strings for the given key.
 func GetKeys(cmd *cobra.Command) {
 	conn := GetCacheConn()
-
 	defer conn.Close()
 
 	keys, err := redis.Strings(conn.Do("KEYS", "*"))

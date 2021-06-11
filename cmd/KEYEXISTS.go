@@ -21,13 +21,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// KeyExists returns whether a key exists or not.
+func KeyExists(k string) bool {
+	conn := GetCacheConn()
+	defer conn.Close()
+
+	existsBytes, err := conn.Do("EXISTS", k)
+	if err != nil {
+		fmt.Printf("error checking if key %s exists: %s", k, err)
+		return false
+	}
+	exists := fmt.Sprint(existsBytes.(int64))
+	if exists == "1" {
+		return true
+	}
+	return false
+}
+
 // KEYEXISTSCmd represents the KEYEXISTS command
 var KEYEXISTSCmd = &cobra.Command{
 	Use:   "KEYEXISTS",
-	Short: "Is it here?",
-	Long: `Is it here?`,
+	Short: "Does key exist?",
+	Long: "Returns whether a key exists or not.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("KEYEXISTS called")
+		fmt.Println(KeyExists(args[0]))
 	},
 }
 

@@ -21,6 +21,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// RemoveMember removes a member from a key.
+func RemoveMember(cmd *cobra.Command, args []string) {
+
+}
+
 // REMOVECmd represents the REMOVE command
 var REMOVECmd = &cobra.Command{
 	Use:   "REMOVE",
