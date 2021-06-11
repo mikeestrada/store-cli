@@ -17,11 +17,31 @@ package cmd
 
 import (
 	"fmt"
-	"log"
+	"strings"
 
-	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
 )
+
+func GetMembers(cmd *cobra.Command, args []string) {
+	conn := GetCacheConn()
+
+	defer conn.Close()
+
+	n, err := conn.Do("GET", args[0])
+	if err != nil {
+		fmt.Printf("error: %s", err)
+	}
+	if n == nil {
+		fmt.Println("ERROR, key does not exist.")
+	} else {
+		members := strings.Split(string(n.([]byte)), ",")
+
+		// ADD functionality appends trailing comma, therefore we specify len(members) - 1.
+		for i := 0; i < len(members) - 1; i++ {
+			fmt.Printf("%d) %s \n", i + 1, members[i])
+		}
+	}
+}
 
 // MEMBEREXISTSCmd represents the MEMBEREXISTS command
 var MEMBERSCmd = &cobra.Command{
@@ -29,18 +49,7 @@ var MEMBERSCmd = &cobra.Command{
 	Short: "Get values for key",
 	Long:  `Get values for key`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("MEMBERS called")
-		conn, err := redis.Dial("tcp", ":6379")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer conn.Close()
-
-		n, err := conn.Do("GET", args[0])
-		if err != nil {
-			fmt.Printf("error: %s", err)
-		}
-		fmt.Println(string(n.([]byte)))
+		GetMembers(cmd, args)
 	},
 }
 

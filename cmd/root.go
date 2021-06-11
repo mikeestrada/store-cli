@@ -17,12 +17,11 @@ package cmd
 
 import (
 	"fmt"
-	"log"
+
 	"os"
 
 	"github.com/spf13/cobra"
 
-	"github.com/gomodule/redigo/redis"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
@@ -33,7 +32,7 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "store-cli",
 	Short: "Store things away",
-	Long: `Store things away`,
+	Long:  `Store things away`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -44,10 +43,7 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	cobra.CheckErr(rootCmd.Execute())
 
-	
 }
-
-
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -62,13 +58,6 @@ func init() {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-
-	conn, err := redis.Dial("tcp", ":6379")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
-	
 }
 
 // initConfig reads in config file and ENV variables if set.

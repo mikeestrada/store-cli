@@ -17,25 +17,19 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 
-	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
 )
 
-type Adder struct {
-	conn redis.Conn
-	do   func()
-}
+func Append(cmd *cobra.Command, args []string) {
+	conn := GetCacheConn()
 
-func NewAdder(cn redis.Conn) *Adder {
-	return &Adder{
-		conn: cn,
+	_, err := conn.Do("APPEND", args[0], args[1]+",")
+	if err != nil {
+		fmt.Printf("error: %s", err)
 	}
-}
-
-func (a *Adder) Add(args []string) {
-
+	defer conn.Close()
+	fmt.Println("Added " + args[1] + " to " + args[0])
 }
 
 // ADDCmd represents the ADD command
@@ -44,18 +38,7 @@ var ADDCmd = &cobra.Command{
 	Short: "Add a key and value",
 	Long:  `Add a key and value`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO check if exists, if so append
-		conn, err := redis.Dial("tcp", ":6379")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer conn.Close()
-
-		n, err := conn.Do("APPEND", args[0], args[1])
-		if err != nil {
-			fmt.Printf("error: %s", err)
-		}
-		fmt.Println(n)
+		Append(cmd, args)
 	},
 }
 
