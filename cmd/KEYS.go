@@ -18,41 +18,46 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
 )
 
-// Append adds a member to a collection for a given key.
-func AppendMember(cmd *cobra.Command, args []string) {
+// GetMembers returns the collection of strings for the given key.
+func GetKeys(cmd *cobra.Command) {
 	conn := GetCacheConn()
 
-	_, err := conn.Do("APPEND", args[0], args[1]+",")
-	if err != nil {
-		fmt.Printf("error: %s", err)
-	}
 	defer conn.Close()
-	fmt.Println("Added " + args[1] + " to " + args[0])
+
+	keys, err := redis.Strings(conn.Do("KEYS", "*"))
+	if err != nil {
+		fmt.Printf("error getting KEYS: %s", err)
+	}
+	fmt.Println("KEYS")
+	for index, key := range keys {
+		fmt.Printf("%d) %s\n", index + 1, key)
+	}
 }
 
-// ADDCmd represents the ADD command
-var ADDCmd = &cobra.Command{
-	Use:   "ADD",
-	Short: "Add a key and value",
-	Long:  "Add a member to a collection for a given key.",
+// KEYSCmd represents the KEYS command
+var KEYSCmd = &cobra.Command{
+	Use:   "KEYS",
+	Short: "Get all keys",
+	Long:  "Returns the collection of strings for the given key.",
 	Run: func(cmd *cobra.Command, args []string) {
-		AppendMember(cmd, args)
+		GetKeys(cmd)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(ADDCmd)
+	rootCmd.AddCommand(KEYSCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// ADDCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// MEMBEREXISTSCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// ADDCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// MEMBEREXISTSCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

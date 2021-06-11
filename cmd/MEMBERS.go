@@ -22,6 +22,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// GetMembers returns the collection of strings for the given key.
 func GetMembers(cmd *cobra.Command, args []string) {
 	conn := GetCacheConn()
 
@@ -32,7 +33,7 @@ func GetMembers(cmd *cobra.Command, args []string) {
 		fmt.Printf("error: %s", err)
 	}
 	if n == nil {
-		fmt.Println("ERROR, key does not exist.")
+		fmt.Println("error, key does not exist.")
 	} else {
 		members := strings.Split(string(n.([]byte)), ",")
 
@@ -43,11 +44,11 @@ func GetMembers(cmd *cobra.Command, args []string) {
 	}
 }
 
-// MEMBEREXISTSCmd represents the MEMBEREXISTS command
+// MEMBEREXISTSCmd represents the MEMBERS command
 var MEMBERSCmd = &cobra.Command{
 	Use:   "MEMBERS",
 	Short: "Get values for key",
-	Long:  `Get values for key`,
+	Long:  "Returns the collection of strings for the given key.",
 	Run: func(cmd *cobra.Command, args []string) {
 		GetMembers(cmd, args)
 	},
