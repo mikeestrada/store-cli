@@ -16,46 +16,49 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
-	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
 )
 
-// GetMembers returns the collection of strings for the given key.
-func GetKeys(cmd *cobra.Command) {
+// RemoveMember removes all members for a key and removes the key from the dictionary. Returns an error if the key does not exist.
+func RemoveAll(key string) error {
+		
+	if KeyExists(key) == false {
+		return errors.New("ERROR, key does not exist")
+	}
+
 	conn := GetCacheConn()
 	defer conn.Close()
 
-	keys, err := redis.Strings(conn.Do("KEYS", "*"))
-	if err != nil {
-		fmt.Printf("error getting KEYS: %s", err)
-	}
-	for index, key := range keys {
-		fmt.Printf("%d) %s\n", index + 1, key)
-	}
+	_, err := conn.Do("DEL", key)
+    return err
 }
 
-// KEYSCmd represents the KEYS command
-var KEYSCmd = &cobra.Command{
-	Use:   "KEYS",
-	Short: "Get all keys",
-	Long:  "Returns the collection of strings for the given key.",
+// REMOVEALLCmd represents the REMOVE command
+var REMOVEALLCmd = &cobra.Command{
+	Use:   "REMOVEALL",
+	Short: "Removes a key and values",
+	Long: `Removes a key and values`,
 	Run: func(cmd *cobra.Command, args []string) {
-		GetKeys(cmd)
+		e := RemoveAll(args[0])
+		if e != nil {
+			fmt.Println(e)
+		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(KEYSCmd)
+	rootCmd.AddCommand(REMOVEALLCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// MEMBEREXISTSCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// REMOVECmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// MEMBEREXISTSCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// REMOVECmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

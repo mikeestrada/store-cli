@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -43,12 +44,16 @@ func GetMembers(key string) []string {
 	return nil
 }
 
-// MEMBEREXISTSCmd represents the MEMBERS command
+// MEMBERSCmd represents the MEMBERS command
 var MEMBERSCmd = &cobra.Command{
 	Use:   "MEMBERS",
 	Short: "Get values for key",
 	Long:  "Returns the collection of strings for the given key.",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			log.Fatal("please supply a key to get members for")
+			return 
+		}
 		members := GetMembers(args[0])
 		for i := 0; i < len(members); i++ {
 			fmt.Printf("%d) %s \n", i + 1, members[i])

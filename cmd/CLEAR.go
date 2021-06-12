@@ -16,46 +16,37 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
 )
 
-// GetMembers returns the collection of strings for the given key.
-func GetKeys(cmd *cobra.Command) {
+// Clear removes all keys and all members from the dictionary.
+func Clear() {
 	conn := GetCacheConn()
 	defer conn.Close()
 
-	keys, err := redis.Strings(conn.Do("KEYS", "*"))
-	if err != nil {
-		fmt.Printf("error getting KEYS: %s", err)
-	}
-	for index, key := range keys {
-		fmt.Printf("%d) %s\n", index + 1, key)
-	}
+	_, _ = conn.Do("FLUSHALL")
 }
 
-// KEYSCmd represents the KEYS command
-var KEYSCmd = &cobra.Command{
-	Use:   "KEYS",
-	Short: "Get all keys",
-	Long:  "Returns the collection of strings for the given key.",
+// CLEARCmd represents the CLEAR command
+var CLEARCmd = &cobra.Command{
+	Use:   "CLEAR",
+	Short: "Removes all keys and all members",
+	Long: `Removes all keys and all members from the dictionary`,
 	Run: func(cmd *cobra.Command, args []string) {
-		GetKeys(cmd)
+		Clear()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(KEYSCmd)
+	rootCmd.AddCommand(CLEARCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// MEMBEREXISTSCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// REMOVECmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// MEMBEREXISTSCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// REMOVECmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
