@@ -21,13 +21,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func getAllMembers() []string {
+	keys := GetKeys()
+	var allMembers []string
+	for _, key := range keys {
+		mems := GetMembers(key)
+		allMembers = append(allMembers, mems...)
+	}
+	return allMembers
+}
+
 // ALLMEMBERSCmd represents the ALLMEMBERS command
 var ALLMEMBERSCmd = &cobra.Command{
 	Use:   "ALLMEMBERS",
 	Short: "Get all members (keys)",
 	Long: `Get all members (keys)`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("ALLMEMBERS called")
+		members := getAllMembers()
+		for i := 0; i < len(members); i++ {
+			fmt.Printf("%d) %s \n", i + 1, members[i])
+		}
 	},
 }
 

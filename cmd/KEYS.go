@@ -23,7 +23,7 @@ import (
 )
 
 // GetMembers returns the collection of strings for the given key.
-func GetKeys(cmd *cobra.Command) {
+func GetKeys() []string {
 	conn := GetCacheConn()
 	defer conn.Close()
 
@@ -31,18 +31,19 @@ func GetKeys(cmd *cobra.Command) {
 	if err != nil {
 		fmt.Printf("error getting KEYS: %s", err)
 	}
-	for index, key := range keys {
-		fmt.Printf("%d) %s\n", index + 1, key)
-	}
+	return keys
 }
 
 // KEYSCmd represents the KEYS command
 var KEYSCmd = &cobra.Command{
 	Use:   "KEYS",
 	Short: "Get all keys",
-	Long:  "Returns the collection of strings for the given key.",
+	Long:  "Returns a collection of keys",
 	Run: func(cmd *cobra.Command, args []string) {
-		GetKeys(cmd)
+		keys := GetKeys()
+		for index, key := range keys {
+			fmt.Printf("%d) %s\n", index + 1, key)
+		}
 	},
 }
 
