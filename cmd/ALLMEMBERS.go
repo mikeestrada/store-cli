@@ -21,7 +21,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func getAllMembers() []string {
+// GetAllMembers returns all the members in the dictionary.  Returns nothing if there are none. Order is not guaranteed.
+func GetAllMembers() []string {
 	keys := GetKeys()
 	var allMembers []string
 	for _, key := range keys {
@@ -37,7 +38,7 @@ var ALLMEMBERSCmd = &cobra.Command{
 	Short: "Get all members (keys)",
 	Long: `Get all members (keys)`,
 	Run: func(cmd *cobra.Command, args []string) {
-		members := getAllMembers()
+		members := GetAllMembers()
 		for i := 0; i < len(members); i++ {
 			fmt.Printf("%d) %s \n", i + 1, members[i])
 		}

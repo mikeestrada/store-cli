@@ -26,7 +26,6 @@ import (
 // GetMembers returns the collection of strings for the given key.
 func GetMembers(key string) []string {
 	conn := GetCacheConn()
-
 	defer conn.Close()
 
 	n, err := conn.Do("GET", key)

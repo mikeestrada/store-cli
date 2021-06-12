@@ -21,13 +21,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// getItems returns all keys in the dictionary and all of their members.  Returns nothing if there are none.  Order is not guaranteed.
+func getItems() string {
+	keys := GetKeys()
+	var items string
+	for index, key := range keys {
+		m := GetMembers(key)
+		items += fmt.Sprintf("%d) %s: %s\n", index + 1, key, m)
+	}
+	return items
+}
+
 // ITEMSCmd represents the ITEMS command
 var ITEMSCmd = &cobra.Command{
 	Use:   "ITEMS",
-	Short: "Get all Items",
-	Long: `Get all Items`,
+	Short: "Get everything",
+	Long: `Get everything including keys and members`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("ITEMS called")
+		fmt.Println(getItems())
 	},
 }
 
