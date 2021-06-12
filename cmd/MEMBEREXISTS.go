@@ -21,13 +21,38 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// MemberExists returns whether a key exists or not.
+func MemberExists(k, v string) bool {
+	conn := GetCacheConn()
+	defer conn.Close()
+
+	members := GetMembers(k)
+	for i := 0; i < len(members); i++ {
+		if members[i] == v {
+			return true
+		}
+	}
+	return false
+
+	// existsBytes, err := conn.Do("EXISTS", k)
+	// if err != nil {
+	// 	fmt.Printf("error checking if member %s exists: %s", k, err)
+	// 	return false
+	// }
+	// exists := fmt.Sprint(existsBytes.(int64))
+	// if exists == "1" {
+	// 	return true
+	// }
+	// return false
+}
+
 // MEMBEREXISTSCmd represents the MEMBEREXISTS command
 var MEMBEREXISTSCmd = &cobra.Command{
 	Use:   "MEMBEREXISTS",
 	Short: "Is the value here?",
 	Long: `Is the value here?`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("MEMBEREXISTS called")
+		fmt.Println(MemberExists(args[0], args[1]))
 	},
 }
 

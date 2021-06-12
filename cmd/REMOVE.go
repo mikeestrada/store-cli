@@ -16,14 +16,38 @@ limitations under the License.
 package cmd
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
 )
 
 // RemoveMember removes a member from a key.
-func RemoveMember(cmd *cobra.Command, args []string) {
-
+func RemoveMember(key, val string) error {
+	
+	ke := KeyExists(key)
+	me := MemberExists(key, val)
+	
+	if me == false {
+		return errors.New("ERROR, member does not exist")
+	}
+	if ke && me {
+		// get vals for key
+		members := GetMembers(key)
+		
+		var newMembers []string
+		for i := 0; i < len(members); i++ {
+			// remove match by creating new slice
+			if members[i] != val {
+				newMembers = append(newMembers, members[i])
+			}
+		}
+		// update vals for key
+		InsertAll(key, newMembers)
+		fmt.Println("REMOVED")
+		
+	}
+	return nil
 }
 
 // REMOVECmd represents the REMOVE command
@@ -32,7 +56,10 @@ var REMOVECmd = &cobra.Command{
 	Short: "Remove a key and value",
 	Long: `Remove a key and value`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("REMOVE called")
+		e := RemoveMember(args[0], args[1])
+		if e != nil {
+			fmt.Println(e)
+		}
 	},
 }
 

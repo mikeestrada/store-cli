@@ -23,25 +23,24 @@ import (
 )
 
 // GetMembers returns the collection of strings for the given key.
-func GetMembers(cmd *cobra.Command, args []string) {
+func GetMembers(key string) []string {
 	conn := GetCacheConn()
 
 	defer conn.Close()
 
-	n, err := conn.Do("GET", args[0])
+	n, err := conn.Do("GET", key)
 	if err != nil {
 		fmt.Printf("error: %s", err)
 	}
 	if n == nil {
-		fmt.Println("error, key does not exist.")
+		fmt.Println("ERROR, key does not exist.")
 	} else {
 		members := strings.Split(string(n.([]byte)), ",")
-
+		
 		// ADD functionality appends trailing comma, therefore we specify len(members) - 1.
-		for i := 0; i < len(members) - 1; i++ {
-			fmt.Printf("%d) %s \n", i + 1, members[i])
-		}
+		return members[:len(members) - 1]
 	}
+	return nil
 }
 
 // MEMBEREXISTSCmd represents the MEMBERS command
@@ -50,7 +49,10 @@ var MEMBERSCmd = &cobra.Command{
 	Short: "Get values for key",
 	Long:  "Returns the collection of strings for the given key.",
 	Run: func(cmd *cobra.Command, args []string) {
-		GetMembers(cmd, args)
+		members := GetMembers(args[0])
+		for i := 0; i < len(members); i++ {
+			fmt.Printf("%d) %s \n", i + 1, members[i])
+		}
 	},
 }
 
