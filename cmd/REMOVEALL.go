@@ -18,7 +18,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
-
+	"log"
 	"github.com/spf13/cobra"
 )
 
@@ -42,6 +42,10 @@ var REMOVEALLCmd = &cobra.Command{
 	Short: "Removes a key and values",
 	Long: `Removes a key and values`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			log.Fatal("please supply a key to remove values for")
+			return 
+		}
 		e := RemoveAll(args[0])
 		if e != nil {
 			fmt.Println(e)

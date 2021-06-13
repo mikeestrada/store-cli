@@ -18,7 +18,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
-
+	"log"
 	"github.com/spf13/cobra"
 )
 
@@ -56,6 +56,10 @@ var REMOVECmd = &cobra.Command{
 	Short: "Remove a key and value",
 	Long: `Remove a key and value`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			log.Fatal("please supply a key and value to remove")
+			return 
+		}
 		e := RemoveMember(args[0], args[1])
 		if e != nil {
 			fmt.Println(e)

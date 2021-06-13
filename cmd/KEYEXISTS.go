@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"fmt"
-
+	"log"
 	"github.com/spf13/cobra"
 )
 
@@ -44,6 +44,10 @@ var KEYEXISTSCmd = &cobra.Command{
 	Short: "Does key exist?",
 	Long: "Returns whether a key exists or not.",
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			log.Fatal("please supply a key to search for")
+			return 
+		}
 		fmt.Println(KeyExists(args[0]))
 	},
 }

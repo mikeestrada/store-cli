@@ -17,20 +17,21 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 )
 
 // Append adds a member to a collection for a given key.
-func AppendMember(cmd *cobra.Command, args []string) {
+func AppendMember(k, v string) {
 	conn := GetCacheConn()
 
-	_, err := conn.Do("APPEND", args[0], args[1]+",")
+	_, err := conn.Do("APPEND", k, v + ",")
 	if err != nil {
 		fmt.Printf("error: %s", err)
 	}
 	defer conn.Close()
-	fmt.Println("Added " + args[1] + " to " + args[0])
+	fmt.Println("Added " + k + " to " + v)
 }
 
 // ADDCmd represents the ADD command
@@ -39,7 +40,11 @@ var ADDCmd = &cobra.Command{
 	Short: "Add a key and value",
 	Long:  "Add a member to a collection for a given key.",
 	Run: func(cmd *cobra.Command, args []string) {
-		AppendMember(cmd, args)
+		if len(args) == 0 {
+			log.Fatal("please supply a key and value to add")
+			return 
+		}
+		AppendMember(args[0], args[1])
 	},
 }
 

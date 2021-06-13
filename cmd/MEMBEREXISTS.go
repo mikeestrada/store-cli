@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"fmt"
-
+	"log"
 	"github.com/spf13/cobra"
 )
 
@@ -33,17 +33,6 @@ func MemberExists(k, v string) bool {
 		}
 	}
 	return false
-
-	// existsBytes, err := conn.Do("EXISTS", k)
-	// if err != nil {
-	// 	fmt.Printf("error checking if member %s exists: %s", k, err)
-	// 	return false
-	// }
-	// exists := fmt.Sprint(existsBytes.(int64))
-	// if exists == "1" {
-	// 	return true
-	// }
-	// return false
 }
 
 // MEMBEREXISTSCmd represents the MEMBEREXISTS command
@@ -52,6 +41,10 @@ var MEMBEREXISTSCmd = &cobra.Command{
 	Short: "Is the value here?",
 	Long: `Is the value here?`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			log.Fatal("please supply a key and value to search for")
+			return 
+		}
 		fmt.Println(MemberExists(args[0], args[1]))
 	},
 }
