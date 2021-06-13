@@ -23,10 +23,13 @@ import (
 
 // getItems returns all keys in the dictionary and all of their members.  Returns nothing if there are none.  Order is not guaranteed.
 func getItems() string {
-	keys := GetKeys()
+	conn := GetCacheConn()
+	defer conn.Close()
+
+	keys := GetKeys(conn)
 	var items string
 	for index, key := range keys {
-		m := GetMembers(key)
+		m := GetMembers(conn, key)
 		items += fmt.Sprintf("%d) %s: %s\n", index + 1, key, m)
 	}
 	return items

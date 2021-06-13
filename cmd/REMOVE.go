@@ -24,16 +24,18 @@ import (
 
 // RemoveMember removes a member from a key.
 func RemoveMember(key, val string) error {
-	
-	ke := KeyExists(key)
-	me := MemberExists(key, val)
+	conn := GetCacheConn()
+	defer conn.Close()
+
+	ke := KeyExists(conn, key)
+	me := MemberExists(conn, key, val)
 	
 	if me == false {
 		return errors.New("ERROR, member does not exist")
 	}
 	if ke && me {
 		// get vals for key
-		members := GetMembers(key)
+		members := GetMembers(conn, key)
 		
 		var newMembers []string
 		for i := 0; i < len(members); i++ {
@@ -43,7 +45,7 @@ func RemoveMember(key, val string) error {
 			}
 		}
 		// update vals for key
-		InsertAll(key, newMembers)
+		InsertAll(conn, key, newMembers)
 		fmt.Println("REMOVED")
 		
 	}

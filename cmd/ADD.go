@@ -25,12 +25,13 @@ import (
 // Append adds a member to a collection for a given key.
 func AppendMember(k, v string) {
 	conn := GetCacheConn()
-
+	defer conn.Close()
+	
 	_, err := conn.Do("APPEND", k, v + ",")
 	if err != nil {
 		fmt.Printf("error: %s", err)
 	}
-	defer conn.Close()
+	
 	fmt.Println("Added " + k + " to " + v)
 }
 

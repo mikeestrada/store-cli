@@ -2,11 +2,18 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/gomodule/redigo/redis"
 )
 
 // InsertAll inserts all given members for a key
-func InsertAll(k string, args []string) {
-	conn := GetCacheConn()
+func InsertAll(r redis.Conn, k string, args []string) {
+	var conn redis.Conn
+	if r == nil {
+		conn = GetCacheConn()
+		defer conn.Close()
+	} else {
+		conn = r
+	}
 
 	_, err := conn.Do("SET", k, sliceToString(args))
 	if err != nil {

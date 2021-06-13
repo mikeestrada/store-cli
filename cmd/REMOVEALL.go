@@ -24,13 +24,12 @@ import (
 
 // RemoveMember removes all members for a key and removes the key from the dictionary. Returns an error if the key does not exist.
 func RemoveAll(key string) error {
-		
-	if KeyExists(key) == false {
-		return errors.New("ERROR, key does not exist")
-	}
-
 	conn := GetCacheConn()
 	defer conn.Close()
+	
+	if KeyExists(conn, key) == false {
+		return errors.New("ERROR, key does not exist")
+	}
 
 	_, err := conn.Do("DEL", key)
     return err

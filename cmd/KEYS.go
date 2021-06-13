@@ -23,14 +23,20 @@ import (
 )
 
 // GetMembers returns the collection of strings for the given key.
-func GetKeys() []string {
-	conn := GetCacheConn()
-	defer conn.Close()
+func GetKeys(r redis.Conn) []string {
+	var conn redis.Conn
+	if r == nil {
+		conn = GetCacheConn()
+		defer conn.Close()
+	} else {
+		conn = r
+	}
 
 	keys, err := redis.Strings(conn.Do("KEYS", "*"))
 	if err != nil {
 		fmt.Printf("error getting KEYS: %s", err)
 	}
+	
 	return keys
 }
 
@@ -40,7 +46,7 @@ var KEYSCmd = &cobra.Command{
 	Short: "Get all keys",
 	Long:  "Returns a collection of keys",
 	Run: func(cmd *cobra.Command, args []string) {
-		keys := GetKeys()
+		keys := GetKeys(nil)
 		for index, key := range keys {
 			fmt.Printf("%d) %s\n", index + 1, key)
 		}

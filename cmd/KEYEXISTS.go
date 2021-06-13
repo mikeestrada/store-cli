@@ -19,12 +19,18 @@ import (
 	"fmt"
 	"log"
 	"github.com/spf13/cobra"
+	"github.com/gomodule/redigo/redis"
 )
 
 // KeyExists returns whether a key exists or not.
-func KeyExists(k string) bool {
-	conn := GetCacheConn()
-	defer conn.Close()
+func KeyExists(r redis.Conn, k string) bool {
+	var conn redis.Conn
+	if r == nil {
+		conn = GetCacheConn()
+		defer conn.Close()
+	} else {
+		conn = r
+	}
 
 	existsBytes, err := conn.Do("EXISTS", k)
 	if err != nil {
@@ -48,7 +54,7 @@ var KEYEXISTSCmd = &cobra.Command{
 			log.Fatal("please supply a key to search for")
 			return 
 		}
-		fmt.Println(KeyExists(args[0]))
+		fmt.Println(KeyExists(nil, args[0]))
 	},
 }
 

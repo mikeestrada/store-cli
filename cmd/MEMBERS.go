@@ -19,14 +19,19 @@ import (
 	"fmt"
 	"log"
 	"strings"
-
+	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
 )
 
 // GetMembers returns the collection of strings for the given key.
-func GetMembers(key string) []string {
-	conn := GetCacheConn()
-	defer conn.Close()
+func GetMembers(r redis.Conn, key string) []string {
+	var conn redis.Conn
+	if r == nil {
+		conn = GetCacheConn()
+		defer conn.Close()
+	} else {
+		conn = r
+	}
 
 	n, err := conn.Do("GET", key)
 	if err != nil {
@@ -53,7 +58,7 @@ var MEMBERSCmd = &cobra.Command{
 			log.Fatal("please supply a key to get members for")
 			return 
 		}
-		members := GetMembers(args[0])
+		members := GetMembers(nil, args[0])
 		for i := 0; i < len(members); i++ {
 			fmt.Printf("%d) %s \n", i + 1, members[i])
 		}

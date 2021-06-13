@@ -23,12 +23,16 @@ import (
 
 // GetAllMembers returns all the members in the dictionary.  Returns nothing if there are none. Order is not guaranteed.
 func GetAllMembers() []string {
-	keys := GetKeys()
+	conn := GetCacheConn()
+	defer conn.Close()
+	
+	keys := GetKeys(conn)
 	var allMembers []string
 	for _, key := range keys {
-		mems := GetMembers(key)
+		mems := GetMembers(conn, key)
 		allMembers = append(allMembers, mems...)
 	}
+	
 	return allMembers
 }
 

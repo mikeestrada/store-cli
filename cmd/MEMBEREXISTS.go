@@ -19,14 +19,20 @@ import (
 	"fmt"
 	"log"
 	"github.com/spf13/cobra"
+	"github.com/gomodule/redigo/redis"
 )
 
 // MemberExists returns whether a key exists or not.
-func MemberExists(k, v string) bool {
-	conn := GetCacheConn()
-	defer conn.Close()
+func MemberExists(r redis.Conn, k, v string) bool {
+	var conn redis.Conn
+	if r == nil {
+		conn = GetCacheConn()
+		defer conn.Close()
+	} else {
+		conn = r
+	}
 
-	members := GetMembers(k)
+	members := GetMembers(conn, k)
 	for i := 0; i < len(members); i++ {
 		if members[i] == v {
 			return true
@@ -41,11 +47,11 @@ var MEMBEREXISTSCmd = &cobra.Command{
 	Short: "Is the value here?",
 	Long: `Is the value here?`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
+		if len(args) == 0 || len(args) == 1 {
 			log.Fatal("please supply a key and value to search for")
 			return 
 		}
-		fmt.Println(MemberExists(args[0], args[1]))
+		fmt.Println(MemberExists(nil, args[0], args[1]))
 	},
 }
 
