@@ -5,6 +5,9 @@
 `brew services start redis`
 Run `redis-cli PING` to confirm cache is running
 
+## Install storecli on your path
+
+
 ##Usage
 ### Add
 - Add a k,v pair with `go run main.go ADD key val`
