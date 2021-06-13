@@ -1,18 +1,22 @@
 # store-cli
 
+
 ## Install Redis
 `brew install redis`
 `brew services start redis`
 Run `redis-cli PING` to confirm cache is running
 
+
 ## Download & Install go lang
 https://golang.org/doc/install
+
 
 ## Download & Install storecli on your path
 Run `git clone https://github.com/mikeestrada/store-cli.git && go build -o storecli && cp ./storecli $GOPATH/bin`
 
 
-##Usage
+
+## Usage
 ### Add
 - Add a k,v pair with `go run main.go ADD key val`
 - Get a value with `go run main.go MEMBERS key`
