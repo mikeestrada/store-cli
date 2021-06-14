@@ -18,11 +18,30 @@ package cmd
 import (
 	"fmt"
 
-	"log"
-
-	"github.com/gomodule/redigo/redis"
 	"github.com/spf13/cobra"
 )
+
+// intersect finds duplicate members for 2 given keys.
+func intersect(key1, key2 string) {
+	conn := GetCacheConn()
+	
+	//get first key
+	mems1 := GetMembers(conn, key1)
+	mems2 := GetMembers(conn, key2)
+
+	// create map to improve search efficiency
+	memsMap := make(map[string]string)
+	for _, mem1 := range mems1 {
+		memsMap[mem1] = mem1
+	}
+	
+	// compare vals
+	for _, mem2 := range mems2 {
+		if memsMap[mem2] == mem2 {
+			fmt.Printf("found equal values: %s\n", mem2)
+		}
+	}
+}
 
 // INTERSECTCmd
 var INTERSECTCmd = &cobra.Command{
@@ -30,48 +49,7 @@ var INTERSECTCmd = &cobra.Command{
 	Short: "INTERSECT",
 	Long:  `INTERSECT`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//2 keys
-		//get first key
-		conn, err := redis.Dial("tcp", ":6379")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer conn.Close()
-
-		n, err := conn.Do("GET", args[0])
-		if err != nil {
-			fmt.Printf("error: %s", err)
-		}
-		if n == nil {
-			fmt.Println("ERROR, key does not exist.")
-		} else {
-			fmt.Println(string(n.([]byte)))
-		}
-
-		//get second key
-		m, err := conn.Do("GET", args[1])
-		if err != nil {
-			fmt.Printf("error: %s", err)
-		}
-		if m == nil {
-			fmt.Println("ERROR, key does not exist.")
-		} else {
-			fmt.Println(string(m.([]byte)))
-		}
-
-		//convert byte arr to string
-		mString := string(m.([]byte))
-		nString := string(m.([]byte))
-
-		// parse out string into array
-
-		// compare vals
-		if mString == nString {
-			fmt.Print("found equal values: ", mString)
-		}
-
-		//return dups
-
+		intersect(args[0], args[1])
 	},
 }
 
