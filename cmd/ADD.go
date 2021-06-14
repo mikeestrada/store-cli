@@ -20,13 +20,19 @@ import (
 	"log"
 
 	"github.com/spf13/cobra"
+	"github.com/gomodule/redigo/redis"
 )
 
 // Append adds a member to a collection for a given key.
-func AppendMember(k, v string) {
-	conn := GetCacheConn()
-	defer conn.Close()
-	
+func AppendMember(r redis.Conn, k, v string) {
+	var conn redis.Conn
+	if r == nil {
+		conn = GetCacheConn()
+		defer conn.Close()
+	} else {
+		conn = r
+	}
+
 	_, err := conn.Do("APPEND", k, v + ",")
 	if err != nil {
 		fmt.Printf("error: %s", err)
@@ -45,7 +51,7 @@ var ADDCmd = &cobra.Command{
 			log.Fatal("please supply a key and value to add")
 			return 
 		}
-		AppendMember(args[0], args[1])
+		AppendMember(nil, args[0], args[1])
 	},
 }
 
