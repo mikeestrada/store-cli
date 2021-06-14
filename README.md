@@ -3,7 +3,9 @@
 
 ## Install Redis
 `brew install redis`
+
 `brew services start redis`
+
 Run `redis-cli PING` to confirm cache is running
 
 
@@ -17,9 +19,8 @@ Run `git clone https://github.com/mikeestrada/store-cli.git && go build -o store
 
 
 ## Usage
-### Add
-- Add a k,v pair with `go run main.go ADD key val`
-- Get a value with `go run main.go MEMBERS key`
+### ADD
+Adds a member to a collection for a given key. Displays an error if the member already exists for the key.
 
 ### KEYS
 Returns all the keys in the dictionary.  Order is not guaranteed.
